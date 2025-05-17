@@ -2,6 +2,8 @@
 
 namespace RahmanRamsi\LaravelTranslatable;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use RahmanRamsi\LaravelTranslatable\Exceptions\AttributeIsNotTranslatable;
@@ -15,12 +17,7 @@ trait HasTranslations
 
     protected ?string $translationLocale = null;
 
-    public function initializeHasTranslations(): void
-    {
-        // $this->mergeCasts(
-        //     array_fill_keys($this->getTranslatableAttributes(), 'array'),
-        // );
-    }
+    public function initializeHasTranslations(): void {}
 
     /**
      * Relationship to the `Translate` model.
@@ -107,17 +104,29 @@ trait HasTranslations
 
         // TODO fallback locale
         if (! $translation && $useFallbackLocale) {
-
         }
 
         return $translation;
     }
 
-    public function getTranslations(string $key)
+    public function getTranslations(?string $key = null)
     {
-        $this->guardAgainstNonTranslatableAttribute($key);
+        if ($key !== null) {
+            $this->guardAgainstNonTranslatableAttribute($key);
 
-        return $this->translate->filter(fn ($item) => $item->key == $key)->mapWithKeys(fn ($item) => [$item->locale => $item->value])->toArray();
+            return $this->translate->filter(fn ($item) => $item->key == $key)->mapWithKeys(fn ($item) => [$item->locale => $item->value])->toArray();
+        }
+
+        return $this->translations;
+    }
+
+    public function translations(): Attribute
+    {
+        return Attribute::get(function () {
+            return collect($this->getTranslatableAttributes())
+                ->mapWithKeys(fn (string $key) => [$key => $this->getTranslations($key)])
+                ->toArray();
+        });
     }
 
     public function getTranslatedLocales(string $key): array
@@ -249,5 +258,19 @@ trait HasTranslations
         }
 
         parent::fill($attributes);
+    }
+
+    public function scopeWhereLocale(Builder $query, string $key, $operator, ?string $locale = null): void
+    {
+        // Shift arguments if no operator is present.
+        if (! isset($locale)) {
+            $locale = $operator;
+            $operator = '=';
+        }
+
+        $query->whereHas('translate', function (Builder $q) use ($key, $operator, $locale) {
+            $q->where('key', $key);
+            $q->where('locale', $operator, $locale);
+        });
     }
 }

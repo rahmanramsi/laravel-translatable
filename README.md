@@ -10,28 +10,6 @@ Laravel Translatable is a package for easily attaching arbitrary translation dat
 ## Features
 - One-to-many polymorphic relationship allows attaching translated data to Eloquent models without needing to adjust the database schema.
 
-<!-- ## Example Usage
-Attach some translation to an eloquent model
-
-```php
-$post = Post::create($this->request->input());
-$post->setTranslation('title', 'en', 'Post Title');
-```
-
-Query the model by its translation
-
-```php
-$post = Post::whereTranslation('title', 'en', 'Post Title');
-```
-
-Retrieve the translation from a model
-```php
-$title = $post->getTranslation('title', 'en'
-or 
-
-$title = $post->title;
-``` -->
-
 ## Installation & Setup
 
 You can install the package via composer:
