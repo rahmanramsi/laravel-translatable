@@ -1,6 +1,10 @@
 <?php
 
-// config for RahmanRamsi/LaravelTranslatable
-return [
+use RahmanRamsi\LaravelTranslatable\Translate;
 
+return [
+    /*
+     * Model class to use for Translate.
+     */
+    'model' => Translate::class,
 ];
