@@ -13,9 +13,8 @@ class Translate extends Model
 
     protected $fillable = ['key', 'value', 'locale'];
 
-	public function translatable() : MorphTo
-	{
-		return $this->morphTo();
-	}
-
+    public function translatable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }
