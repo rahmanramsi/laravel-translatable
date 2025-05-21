@@ -44,7 +44,7 @@ trait HasTranslations
 
     public function getLocale(): string
     {
-        return $this->translationLocale ?: config('app.locale');
+        return $this->translationLocale ?: app()->getLocale();
     }
 
     public function setLocale(string $locale): self
@@ -114,7 +114,7 @@ trait HasTranslations
         if ($key !== null) {
             $this->guardAgainstNonTranslatableAttribute($key);
 
-            return $this->translate->filter(fn ($item) => $item->key == $key)->mapWithKeys(fn ($item) => [$item->locale => $item->value])->toArray();
+            return $this->getTranslateCollection()->filter(fn ($item) => $item->key == $key)->mapWithKeys(fn ($item) => [$item->locale => $item->value])->toArray();
         }
 
         return $this->translations;
@@ -161,7 +161,7 @@ trait HasTranslations
         return $key.'_'.$locale;
     }
 
-    public function setTranslation(string $key, string $locale, string $value): self
+    public function setTranslation(string $key, string $locale, ?string $value): self
     {
         $this->guardAgainstNonTranslatableAttribute($key);
 
@@ -233,14 +233,13 @@ trait HasTranslations
         if (! $this->isTranslatableAttribute($key)) {
             return parent::getAttribute($key);
         }
-
         return $this->getTranslation($key, $this->getLocale(), $this->useFallbackLocale());
     }
 
     public function setAttribute($key, $value)
     {
         if (! $this->isTranslatableAttribute($key)) {
-            parent::setAttribute($key);
+            parent::setAttribute($key, $value);
 
             return;
         }

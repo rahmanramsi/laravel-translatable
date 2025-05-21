@@ -15,7 +15,7 @@ return new class extends Migration
                 $table->morphs('translatable');
                 $table->string('locale')->index();
                 $table->string('key')->index();
-                $table->longtext('value');
+                $table->longtext('value')->nullable();
 
                 $table->unique(['translatable_type', 'translatable_id', 'locale', 'key']);
                 $table->index(['key', 'translatable_type']);
