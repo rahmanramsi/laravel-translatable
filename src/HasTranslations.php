@@ -186,14 +186,14 @@ trait HasTranslations
         return $this;
     }
 
-    protected function guardAgainstNonTranslatableAttribute(string $key): void
+    protected function guardAgainstNonTranslatableAttribute(?string $key): void
     {
         if (! $this->isTranslatableAttribute($key)) {
             throw AttributeIsNotTranslatable::make($key, $this);
         }
     }
 
-    public function isTranslatableAttribute(string $key): bool
+    public function isTranslatableAttribute(?string $key): bool
     {
         return in_array($key, $this->getTranslatableAttributes());
     }
