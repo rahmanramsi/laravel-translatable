@@ -233,6 +233,7 @@ trait HasTranslations
         if (! $this->isTranslatableAttribute($key)) {
             return parent::getAttribute($key);
         }
+
         return $this->getTranslation($key, $this->getLocale(), $this->useFallbackLocale());
     }
 
